@@ -1,28 +1,34 @@
 pragma solidity ^0.4.17;
 
 contract Lottery {
-    address public owner;
+    address public manager;
     address[] public players;
-
-    constructor() public {
-        owner = msg.sender;
-        players.push(owner);
+    
+    function Lottery() public {
+        manager = msg.sender;
     }
-
-    function getOwner() public view returns (address) {
-        return owner;
+    
+    function enter() public payable {
+        require(msg.value > .01 ether);
+        players.push(msg.sender);
     }
-
+    
+    function random() private view returns (uint) {
+        return uint(keccak256(block.difficulty, now, players));
+    }
+    
+    function pickWinner() public restricted {
+        uint index = random() % players.length;
+        players[index].transfer(this.balance);
+        players = new address[](0);
+    }
+    
+    modifier restricted() {
+        require(msg.sender == manager);
+        _;
+    }
+    
     function getPlayers() public view returns (address[]) {
         return players;
     }
-
-    function addPlayer(address playerToAdd) public returns (bool) {
-        players.push(playerToAdd);
-        return true;
-    }
-
-    function lenPlayers() public view returns (uint256) {
-        return players.length;
-    }
-}
+}   
