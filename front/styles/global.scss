@@ -1,0 +1,13 @@
+@import "reset.scss";
+@import "fonts.scss";
+@import "background.scss";
+.active {
+  p {
+    text-decoration: underline;
+  }
+}
+.inactive {
+  p {
+    text-decoration: none;
+  }
+}
